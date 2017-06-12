@@ -26,7 +26,37 @@ void imprime_caca_palavras(char matriz[10][10]){
 	}
 }
 
-void encaixar_palavra_horizontal(char matriz[10][10], char palavra[]){
+void encaixar_palavra_vertical(char matriz[10][10], char palavra[]){
+	strupr(palavra);
+	int i = rand() % 10;
+	int j = rand() % 10;
+	int check = 0;
+	
+	while(check == 0){
+		while (i > (10 - strlen(palavra))){
+			i = rand() % 10;
+		}
+		for(int i1 = i; i1 < strlen(palavra); i1++){
+			if(matriz[i1][j] != 0){
+				check = 2;
+				break;
+			}
+		}
+		if(check == 2){
+			j = rand() % 10; 
+			check = 0;
+		}else{
+			check = 1;
+		}
+	}
+	
+	for(int k = 0;k < strlen(palavra);k++){
+		matriz[i][j] = palavra[k];
+		i++;
+	}
+}
+
+void encaixar_palavra_horizontal(char matriz[10][10], char palavra[], int metodo){
 	strupr(palavra);
 	int i = rand() % 10;
 	int j = rand() % 10;
@@ -36,7 +66,7 @@ void encaixar_palavra_horizontal(char matriz[10][10], char palavra[]){
 		while (j > (10 - strlen(palavra))){
 			j = rand() % 10;
 		}
-		for(int j1 = j; j1 < 10; j1++){
+		for(int j1 = j; j1 < strlen(palavra); j1++){
 			if(matriz[i][j1] != 0){
 				check = 2;
 				break;
@@ -77,16 +107,16 @@ int main(){
 	}
 	srand(time(NULL)); // funcao que prepara a funcao rand() para gerar valores aleatorios
 	
-	encaixar_palavra_horizontal(caca_palavras, palavra0);
-	encaixar_palavra_horizontal(caca_palavras, palavra1);
-	encaixar_palavra_horizontal(caca_palavras, palavra2);
-	encaixar_palavra_horizontal(caca_palavras, palavra3);
-	encaixar_palavra_horizontal(caca_palavras, palavra4);
-	encaixar_palavra_horizontal(caca_palavras, palavra5);
-	encaixar_palavra_horizontal(caca_palavras, palavra6);
-	encaixar_palavra_horizontal(caca_palavras, palavra7);
-	encaixar_palavra_horizontal(caca_palavras, palavra8);
-	encaixar_palavra_horizontal(caca_palavras, palavra9);
+	encaixar_palavra_vertical(caca_palavras, palavra0);
+	encaixar_palavra_vertical(caca_palavras, palavra1);
+	encaixar_palavra_vertical(caca_palavras, palavra2);
+	encaixar_palavra_vertical(caca_palavras, palavra3);
+	encaixar_palavra_vertical(caca_palavras, palavra4);
+	encaixar_palavra_vertical(caca_palavras, palavra5);
+	encaixar_palavra_vertical(caca_palavras, palavra6);
+	encaixar_palavra_vertical(caca_palavras, palavra7);
+	encaixar_palavra_vertical(caca_palavras, palavra8);
+	encaixar_palavra_vertical(caca_palavras, palavra9);
 	
 	preenche_matriz_com_letras(caca_palavras);
 	imprime_caca_palavras(caca_palavras);
