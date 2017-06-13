@@ -1,7 +1,7 @@
 /* Mainara + Anarco */
 
 
-
+#include <time.h>
 #include <stdlib.h>
 #include <cstdlib>
 #include <string.h>
@@ -156,6 +156,21 @@ int main() {
 			count++;
 		}
 	}
-		
+	
+	
+	char caca_palavras[10][10];
+	
+	//preenche a matriz com zeros, evitando lixos de memoria
+	for(int i = 0; i < 10; i++){
+		memset(caca_palavras[i], 0, 10);
+	}
+	srand(time(NULL)); // funcao que prepara a funcao rand() para gerar valores aleatorios
+	
+	for (int i = 0; i < count; i++){
+		encaixar_palavra_vertical(caca_palavras, palavras[i]);
+	}
+	
+	preenche_matriz_com_letras(caca_palavras);
+	imprime_caca_palavras(caca_palavras);
 }
 
