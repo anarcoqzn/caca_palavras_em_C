@@ -1,96 +1,400 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
 
-void preenche_matriz_com_letras(char matriz[10][10]){
-	char alfabeto[26] = {'A', 'B', 'C', 'D', 'E','F', 'G', 'H', 'I', 'J','K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
+#include <time.h>
+#include <stdlib.h>
+#include <cstdlib>
+#include <string.h>
+#include <ctype.h>
+#include <stdio.h>
+#include <iostream>
+#include <string>
+
+	
+using namespace std;
+
+#define TEN 10
+char wordSearch[10][10];
+int count = 0;
+
+string strupr(string str){
+	int size = str.size();
+	for(int i = 0; i < size; i++){
+		str[i] = toupper(str[i]);
+	}
+	return str;
+}
+
+string strlwr(string str){
+	int size = str.size();
+	for(int i = 0; i < size; i++){
+		str[i] = tolower(str[i]);
+	}
+	return str;
+}
+
+bool has_int(string word) {
+	bool has_int = false;
+	int n = word.size();
+	for (int i = 0; i < n; i++){
+		if ((word[i] == '0') | (word[i] == '1') | (word[i] == '2') | 
+			(word[i] == '3') | (word[i] == '4') | (word[i] == '5') |
+			(word[i] == '6') | (word[i] == '7') | (word[i] == '8') |
+			(word[i] == '9')){
+			has_int = true;
+		}
+	}
+	return has_int;
+}
+
+bool has_word(string words[], string word, int count){
+	bool has_word = false;
+	for (int i = 0; i < count; i++) {
+		if (words[i] == word)
+			has_word = true;
+	}
+	return has_word;
+} 
+
+bool validate_word(string words[], string word, int count) {
+	bool increase_n = false;
+	
+	if (has_int(word)){
+		string error = "A palavra não deve possuir inteiros, tente outra palavra.\n";
+		cout << error;
+		increase_n = true;
+	}
+	
+	else if ((word.size() > 10) | (word.size() < 2)) {
+		string error = "A palavra deve possuir entre 2 e 10 letras, tente outra palavra.\n";
+		cout << error;
+		increase_n = true;
+	}
+	
+	else if (has_word(words, word, count)){
+		string error = "A palavra já está no caça-palavras, tente outra palavra.\n";
+		cout << error;
+		increase_n = true;
+	}
+	return increase_n;
+}
+
+void fill_matrix_letters(){
+	char alphabet[26] = {'A', 'B', 'C', 'D', 'E','F', 'G', 'H', 'I', 'J','K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'};
 
 	//preenche a matriz com as letras do array alfabeto
 	for(int i = 0; i < 10; i++){
 		for(int j = 0; j < 10; j++){
-			int indice = rand() % 26; //aqui eu gero um valor aleatorio entre 0 e 25. Os indices do array
-			if(matriz[i][j] == 0){
-				matriz[i][j] = alfabeto[indice];	
+			int index = rand() % 26; //aqui eu gero um valor aleatorio entre 0 e 25. Os indices do array
+			if(wordSearch[i][j] == 0){
+				wordSearch[i][j] = alphabet[index];	
 			}
 		}
 	}
 }
 
-void imprime_caca_palavras(char matriz[10][10]){
+void print_wordSearch(){
+	
 	for(int i = 0; i < 10; i++){
 		for(int j = 0; j < 10; j++){
-			printf("%c ", matriz[i][j]);
+			printf(" %c ", wordSearch[i][j]);
 		}
 		printf("\n");
 	}
 }
 
-void encaixar_palavra_horizontal(char matriz[10][10], char palavra[]){
-	strupr(palavra);
-	int i = rand() % 10;
-	int j = rand() % 10;
-	int check = 0;
+
+void fit_word_diagonal(string word){
+	word = strupr(word);
+    int size_word = word.size();
+	int ok = 0;
+	int i = 0;
+	int j = 0;
 	
-	while(check == 0){
-		while (j > (10 - strlen(palavra))){
-			j = rand() % 10;
+	do{					
+		i = size_word + (rand() % (TEN - size_word)); //linha da primeira letra da palavra
+		j = rand() % (TEN - size_word); //coluna da primeira letra da palavra
+		
+		int i1 = i;
+		int j1 = j;
+		for(; i1 < size_word; i1++){
+			if(wordSearch[i1][j1] != 0){
+				break;
+			}
+			j1++;
 		}
-		for(int j1 = j; j1 < 10; j1++){
-			if(matriz[i][j1] != 0){
-				check = 2;
+		
+		if(i1 == size_word){
+			ok =1;
+		}
+		
+    }while(ok == 0);
+       
+    for(int k =0; k < size_word; k++) {
+        wordSearch[i][j] = word[k];
+        i--;
+        j++;
+    }
+}
+
+void fit_word_vertical(string word){
+	word = strupr(word);
+	int size_word = word.size();
+	int ok = 0;
+	int i = 0;
+	int j = 0;
+	
+	do{					
+		i = size_word + (rand() % (TEN - size_word)); //linha da primeira letra da palavra
+		j = rand() % (TEN - size_word); //coluna da primeira letra da palavra
+		
+		int i1 = i;
+		for(; i1 < size_word; i1++){
+			if(wordSearch[i1][j] != 0){
 				break;
 			}
 		}
-		if(check == 2){
-			i = rand() % 10; 
-			check = 0;
-		}else{
-			check = 1;
+		
+		if(i1 == size_word){
+			ok = 1;
 		}
-	}
+		
+    }while(ok == 0);
 	
-	for(int k = 0;k < strlen(palavra);k++){
-		matriz[i][j] = palavra[k];
+	for(int k = 0;k < size_word;k++){
+		wordSearch[i][j] = word[k];
+		i++;
+	}
+}
+
+void fit_word_horizontal(string word){
+	word = strupr(word);
+	int size_word = word.size();
+	int ok = 0;
+	int i = 0;
+	int j = 0;
+	
+	do{					
+		i = size_word + (rand() % (TEN - size_word)); //linha da primeira letra da palavra
+		j = rand() % (TEN - size_word); //coluna da primeira letra da palavra
+		
+		int j1 = j;
+		for(; j1 < size_word; j1++){
+			if(wordSearch[i][j1] != 0){
+				break;
+			}
+		}
+		
+		if(j1 == size_word){
+			ok = 1;
+		}
+		
+    }while(ok == 0);
+	
+	for(int k = 0;k < size_word;k++){
+		wordSearch[i][j] = word[k];
 		j++;
 	}
 }
 
-int main(){
+
+
+int calculate_ten_percent(int n){
+	int ten_percent = (n/100)*TEN;
+	return ten_percent;
+}
+
+string reverse(string word){
+	 string reverse = "";
+	 int size_word = word.size();
+	 int n = 0;
+	 for (int i=size_word; i >= 0; i--){
+          reverse += word[i];
+          n++;
+     } 
+     return reverse;
+}
+
+void fill_word_reverse(string word){
+	word = reverse(word);
+	fit_word_horizontal(word);
+}
+
+bool validate_n(int n){
+	bool n_valid = true;
+	if (n < 4){
+		cout << "A quantidade de palavras deve ser maior ou igual a 4, tente outra quantidade." << endl;
+		n_valid = false;
+	}
+	else if (n > 25){
+		 cout << "A quantidade de palavras deve ser menor ou igual a 25, tente outra quantidade." << endl;
+		n_valid = false;
+	}
+	return n_valid;
+}
+
+// Verifica se a palavra formada está no array
+int search_array(string* array, string word){
+	word = strlwr(word);
 	
-	char palavra0[] = "uvinha";
-	char palavra1[] = "bolacha";
-	char palavra2[] = "flor";
-	char palavra3[] = "violao";
-	char palavra4[] = "galinha";
-	char palavra5[] = "foguete";
-	char palavra6[] = "soldado";
-	char palavra7[] = "bomba";
-	char palavra8[] = "carro";
-	char palavra9[] = "gol";
+	for (int i = 0; i < count; i++){
+		if( word == strlwr(array[i])){
+			return i;
+		}
+	}
+	return -1;
+}
+
+// Remove um elemento de um array
+string* remove(string* list, int index_element){
+	for (int i = index_element; i <  count; ++i){
+		list[i] = list[i + 1];
+	}
+	count--;
+	return list;
+}
+
+// Encontra palavra
+bool search_word(string secret_words[]){
+	bool achou = false;
+	string word;
+	string ask;
+	do{
+		int line,column;
 	
-	char caca_palavras[10][10];
+		cout << "Digite a linha: " << endl;
+		cin >> line;
+		cout << "Digite a coluna: " <<endl;
+		cin >> column;
+	
+		word += wordSearch[line-1][column-1];
+	
+		printf("\nPalavra: %s \n", word.c_str());
+	
+		cout << "Deseja continuar? (S/N)" << endl;
+		cin >> ask;
+		cout << endl;
+		
+	}while(ask == "S" || ask == "s");
+	
+	
+	int index_element = search_array(secret_words, word);
+	
+	if( index_element != -1){
+		printf("\nPARABÉNS, VOCÊ ENCONTROU A PALAVRA: %s\n", word.c_str());
+		
+		achou = true;
+	}else{
+		cout << "PALAVRA NÃO ENCONTRADA" << endl;
+		achou = false;
+	}		
+	return achou;
+}
+
+void initialize(){
+	cout << endl;
+	cout << "*********************JOGO DE CAÇA PALAVRAS*********************" << endl;
+	cout << endl;
+	
+	cout << "Intruções: " << endl;
+	cout << "	1 - Você irá digitar o número de palavras que devem ser escondidas no caça palavras." << endl;
+	cout << "	2 - Você deverá digitar as palavras que serão escondidas uma por vez." << endl;
+	cout << "	3 - Para procurar as palavras você irá precisar informar as linhas e as colunas das palavras que será formada." << endl;
+	cout << "	4 - O jogo será finalizado quando todas as palavras forem encontradas." << endl;
+	cout << endl;
+	cout << "Digite a quantidade de palavras que serão escondidas:" << endl;
+}
+
+
+int main() {
+	initialize();
+	int n;
+	cin >> n;
+	while (!validate_n(n)){
+		cin >> n;
+	}
+	string words[n];
+	
+	for (int i = 0; i < n; i++){
+		cout << "Digite a palavra:" << endl;
+		string word;
+		cin >> word;
+		if (validate_word(words, word, count)){
+			n += 1;
+		}
+		else {
+			words[count] = word;
+			count++;
+		}
+	}
+	
+	int ten_percent = calculate_ten_percent(count);
 	
 	//preenche a matriz com zeros, evitando lixos de memoria
 	for(int i = 0; i < 10; i++){
-		memset(caca_palavras[i], 0, 10);
+		memset(wordSearch[i], 0, 10);
 	}
 	srand(time(NULL)); // funcao que prepara a funcao rand() para gerar valores aleatorios
 	
-	encaixar_palavra_horizontal(caca_palavras, palavra0);
-	encaixar_palavra_horizontal(caca_palavras, palavra1);
-	encaixar_palavra_horizontal(caca_palavras, palavra2);
-	encaixar_palavra_horizontal(caca_palavras, palavra3);
-	encaixar_palavra_horizontal(caca_palavras, palavra4);
-	encaixar_palavra_horizontal(caca_palavras, palavra5);
-	encaixar_palavra_horizontal(caca_palavras, palavra6);
-	encaixar_palavra_horizontal(caca_palavras, palavra7);
-	encaixar_palavra_horizontal(caca_palavras, palavra8);
-	encaixar_palavra_horizontal(caca_palavras, palavra9);
+
+	fit_word_diagonal(words[0]);
 	
-	preenche_matriz_com_letras(caca_palavras);
-	imprime_caca_palavras(caca_palavras);
+	if (ten_percent == 0){
+		fill_word_reverse(words[1]);
+		
+	}
+	for (int i = ten_percent; i < 2*ten_percent; i++){
+		fill_word_reverse(words[i]);
+		
+	}
 	
-	system("PAUSE");
-	return 0;
+	// a palavra da segunda posicao nao esta sendo colocada porque vai ser 
+	// colocada no metodo de cima q ainda nao foi implementado
+	if (ten_percent == 0){
+		for (int i = 2; i < count; i++){
+			if(i%2 == 0){
+				fit_word_vertical(words[i]);
+				
+			}else{
+				fit_word_horizontal(words[i]);
+				
+			}
+		}
+	}
+	else{ 
+		for (int i = 2*ten_percent; i < count; i++){
+			if(i%2 == 0){
+				fit_word_vertical(words[i]);
+				
+			}else{
+				fit_word_horizontal(words[i]);
+				
+			}
+		}
+	}
+	
+	cout << endl;
+	cout << "   CAÇA PALAVRAS" << endl;
+	cout << endl;
+	fill_matrix_letters();
+	print_wordSearch();
+	
+	cout << endl;
+	cout << "Agora encontre as palavras" << endl;
+	cout << endl;
+	string ask = "S";
+	
+	while (ask == "S" && count > 0){
+		
+		bool find_word = search_word(words);
+		if (find_word){
+			count--;
+		}else{
+			cout << "Deseja continuar jogando? (S/N)"<< endl;
+			cin >> ask;
+			ask = strupr(ask);
+		}
+	}
+	
+	if(count == 0){
+		cout << "Jogo finalizado, você encontrou todas as palavras, parabéns!" << endl;
+	}
 }
