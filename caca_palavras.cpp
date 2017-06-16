@@ -110,19 +110,18 @@ void fit_word_diagonal(string word){
 	int j = 0;
 	
 	do{					
-		i = size_word + (rand() % (TEN - size_word)); //linha da primeira letra da palavra
-		j = rand() % (TEN - size_word); //coluna da primeira letra da palavra
+		i = rand() % TEN; //linha da primeira letra da palavra
+		j = rand() % TEN; //coluna da primeira letra da palavra
 		
-		int i1 = i;
-		int j1 = j;
-		for(; i1 < size_word; i1++){
-			if(wordSearch[i1][j1] != 0){
-				break;
-			}
-			j1++;
+		int i1 = 0;
+		int i2 = i;
+		int j2 = j;
+		while(i1 < size_word && wordSearch[i2][j2] == 0){
+			i1++;
+			i2++;
 		}
 		
-		if(i1 == size_word){
+		if((i2 < 10) && (j2 < 10) && (i1 == size_word)){
 			ok =1;
 		}
 		
@@ -130,7 +129,7 @@ void fit_word_diagonal(string word){
        
     for(int k =0; k < size_word; k++) {
         wordSearch[i][j] = word[k];
-        i--;
+        i++;
         j++;
     }
 }
@@ -143,17 +142,17 @@ void fit_word_vertical(string word){
 	int j = 0;
 	
 	do{					
-		i = size_word + (rand() % (TEN - size_word)); //linha da primeira letra da palavra
-		j = rand() % (TEN - size_word); //coluna da primeira letra da palavra
+		i = rand() % TEN; //linha da primeira letra da palavra
+		j = rand() % TEN; //coluna da primeira letra da palavra
 		
-		int i1 = i;
-		for(; i1 < size_word; i1++){
-			if(wordSearch[i1][j] != 0){
-				break;
-			}
+		int i1 = 0;
+		int i2 = i;
+		while(i1 < size_word && wordSearch[i2][j] == 0){
+			i1++;
+			i2++;
 		}
 		
-		if(i1 == size_word){
+		if((i2 < 10) && (i1 == size_word)){
 			ok = 1;
 		}
 		
@@ -173,17 +172,17 @@ void fit_word_horizontal(string word){
 	int j = 0;
 	
 	do{					
-		i = size_word + (rand() % (TEN - size_word)); //linha da primeira letra da palavra
-		j = rand() % (TEN - size_word); //coluna da primeira letra da palavra
+		i = rand() % TEN; //linha da primeira letra da palavra
+		j = rand() % TEN; //coluna da primeira letra da palavra
 		
-		int j1 = j;
-		for(; j1 < size_word; j1++){
-			if(wordSearch[i][j1] != 0){
-				break;
-			}
+		int i1 = 0;
+		int j2 = j;
+		while(i1 < size_word && wordSearch[i][j2] == 0){
+			i1++;
+			j2++;
 		}
 		
-		if(j1 == size_word){
+		if((j2 < 10) && (i1 == size_word)){
 			ok = 1;
 		}
 		
@@ -301,6 +300,10 @@ void initialize(){
 	cout << "	4 - O jogo será finalizado quando todas as palavras forem encontradas." << endl;
 	cout << endl;
 	cout << "Digite a quantidade de palavras que serão escondidas:" << endl;
+	//preenche a matriz com zeros, evitando lixos de memoria
+	for(int i = 0; i < 10; i++){
+		memset(wordSearch[i], 0, 10);
+	}
 }
 
 
@@ -328,13 +331,8 @@ int main() {
 	
 	int ten_percent = calculate_ten_percent(count);
 	
-	//preenche a matriz com zeros, evitando lixos de memoria
-	for(int i = 0; i < 10; i++){
-		memset(wordSearch[i], 0, 10);
-	}
 	srand(time(NULL)); // funcao que prepara a funcao rand() para gerar valores aleatorios
 	
-
 	fit_word_diagonal(words[0]);
 	
 	if (ten_percent == 0){
